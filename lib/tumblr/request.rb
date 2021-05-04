@@ -39,6 +39,15 @@ module Tumblr
       respond(response)
     end
 
+    # TODO: Test me!
+    def delete(path, params={})
+      response = connection.delete do |req|
+        req.url path
+        req.body = params unless params.empty?
+      end
+      respond(response)
+    end
+
     def respond(response)
       output = if [201, 200].include?(response.status)
         response.body['response'] || response.body[:response]

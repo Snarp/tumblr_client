@@ -8,7 +8,11 @@ module Tumblr
     end
 
     def full_blog_name(blog_name)
-      blog_name.include?('.') ? blog_name : "#{blog_name}.tumblr.com"
+      if blog_name.include?('.') || blog_name.start_with?('t:')
+        blog_name
+      else
+        "#{blog_name}.tumblr.com"
+      end
     end
 
     def validate_options(valid_opts, opts)

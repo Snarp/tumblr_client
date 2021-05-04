@@ -60,5 +60,22 @@ module Tumblr
       get(blog_path(blog_name, 'blocks'), options)
     end
 
+    # TODO: Test me!
+    def block(blocker_blog_name, options={})
+      validate_options([:blocked_tumblelog,:post_id], options)
+      post(blog_path(blocker_blog_name, 'blocks'), options)
+    end
+
+    # TODO: Test me!
+    def unblock(blocker_blog_name, options={})
+      validate_options([:blocked_tumblelog,:anonymous_only], options)
+      post(blog_path(blocker_blog_name, 'blocks'), options)
+    end
+
+    def blog_following(blog_name, options={})
+      validate_options([:limit, :offset], options)
+      get(blog_path(blog_name, 'following'), options)
+    end
+
   end
 end
