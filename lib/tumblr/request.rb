@@ -48,7 +48,7 @@ module Tumblr
       respond(response)
     end
 
-    # TODO: Test me!
+    # FIXME: Tumblr API does not appear to accept default Faraday-formatted delete requests.
     def delete(path, params={})
       response = connection.delete do |req|
         req.url path

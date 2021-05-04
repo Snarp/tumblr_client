@@ -1,5 +1,6 @@
 require 'spec_helper'
 
+# TODO: Add tests for PUT, DELETE methods!
 describe Tumblr::Request do
 
   let(:client) { Tumblr::Client.new }

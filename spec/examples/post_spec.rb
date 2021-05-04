@@ -1,5 +1,6 @@
 require 'spec_helper'
 
+# TODO: Add tests for PostNpf methods!
 describe Tumblr::Post do
 
   let(:client) { Tumblr::Client.new }

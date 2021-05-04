@@ -17,8 +17,8 @@ a pull request, a bot will automatically check if you have already submitted
 one. If not it will ask you to do so by visiting a link and signing in with
 GitHub.
 
-The CLA, contact information, and GitHub sign-in can be found here:
-[https://yahoocla.herokuapp.com](https://yahoocla.herokuapp.com).
+<del>The CLA, contact information, and GitHub sign-in can be found here:
+[https://yahoocla.herokuapp.com](https://yahoocla.herokuapp.com).</del> (If Tumblr is still using one of these, it's not the Yahoo one.)
 
 ## License
 

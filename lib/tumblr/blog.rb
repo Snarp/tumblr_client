@@ -89,26 +89,26 @@ module Tumblr
       validate_options([:limit,:offset], options)
       get(blog_path(blog_name, 'blocks'), options)
     end
+    alias_method :blocked, :blocks
 
-    # TODO: Test me!
     def block(blocker_blog_name, blocked_tumblelog=nil, options={})
       validate_options([:blocked_tumblelog,:post_id], options)
       options[:blocked_tumblelog] ||= blocked_tumblelog
       post(blog_path(blocker_blog_name, 'blocks'), options)
     end
 
-    # TODO: Test me!
+    # FIXME: Tumblr API does not appear to accept default Faraday-formatted DELETE requests...?
     def unblock(blocker_blog_name, blocked_tumblelog=nil, options={})
       validate_options([:blocked_tumblelog,:anonymous_only], options)
       options[:blocked_tumblelog] ||= blocked_tumblelog
-      post(blog_path(blocker_blog_name, 'blocks'), options)
+      delete(blog_path(blocker_blog_name, 'blocks'), options)
     end
 
-    # TODO: Test me!
     def notes(blog_name, post_id=nil, options={})
       validate_options([:id,:before_timestamp,:mode], options)
       options[:id] ||= post_id
-      post(blog_path(blocker_blog_name, 'notes'), options)
+      puts "#{{path: blog_path(blog_name, 'notes'), options: options}}"
+      get(blog_path(blog_name, 'notes'), options)
     end
 
   end
