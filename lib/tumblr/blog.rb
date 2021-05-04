@@ -41,14 +41,26 @@ module Tumblr
     end
 
     def queue(blog_name, options = {})
-      validate_options([:limit, :offset], options)
+      validate_options([:limit,:offset,:filter], options)
       get(blog_path(blog_name, 'posts/queue'), options)
+    end
+
+    # TODO: Test me!
+    def reorder_queue(blog_name, options={})
+      validate_options([:post_id,:insert_after], options)
+      post(blog_path(blog_name, 'posts/queue/reorder'), options)
+    end
+
+    # TODO: Test me!
+    def shuffle_queue(blog_name)
+      post(blog_path(blog_name, 'posts/queue/shuffle'))
     end
 
     def draft(blog_name, options = {})
       validate_options([:limit, :before_id], options)
       get(blog_path(blog_name, 'posts/draft'), options)
     end
+    alias_method :drafts, :draft
 
     def submissions(blog_name, options = {})
       validate_options([:limit, :offset], options)
@@ -83,6 +95,12 @@ module Tumblr
       validate_options([:query], options)
       options[:query] = query
       get(blog_path(blog_name, 'followed_by'), options)
+    end
+
+    # REVIEW: :types args do not appear to be working as of 2021-05-04
+    def notifications(blog_name, options={})
+      validate_options([:before,:types], options)
+      get(blog_path(blog_name, 'notifications'), options)
     end
 
   end
