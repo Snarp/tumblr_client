@@ -18,6 +18,19 @@ module Tumblr
       validate_options([:limit, :offset], options)
       get(blog_path(blog_name, 'followers'), options)
     end
+    alias_method :blog_followers, :followers
+
+    def blog_following(blog_name, options={})
+      validate_options([:limit, :offset], options)
+      get(blog_path(blog_name, 'following'), options)
+    end
+
+    def followed_by(blog_name, query, options={})
+      validate_options([:query], options)
+      options[:query] = query
+      get(blog_path(blog_name, 'followed_by'), options)
+    end
+    alias_method :blog_followed_by, :followed_by
 
     # Gets the list of likes for the blog
     def blog_likes(blog_name, options = {})
@@ -38,6 +51,11 @@ module Tumblr
       params = { :api_key => @consumer_key }
       params.merge! options
       get(url, params)
+    end
+
+    def get_post(blog_name, post_id, options={})
+      validate_options([:post_format], options)
+      get(blog_path(blog_name, "posts/#{post_id}"), options)
     end
 
     def queue(blog_name, options = {})
@@ -67,6 +85,12 @@ module Tumblr
       get(blog_path(blog_name, 'posts/submission'), options)
     end
 
+    # REVIEW: :types args do not appear to be working as of 2021-05-04
+    def notifications(blog_name, options={})
+      validate_options([:before,:types], options)
+      get(blog_path(blog_name, 'notifications'), options)
+    end
+
     def blocks(blog_name, options={})
       validate_options([:limit,:offset], options)
       get(blog_path(blog_name, 'blocks'), options)
@@ -84,23 +108,6 @@ module Tumblr
       validate_options([:blocked_tumblelog,:anonymous_only], options)
       options[:blocked_tumblelog] ||= blocked_tumblelog
       post(blog_path(blocker_blog_name, 'blocks'), options)
-    end
-
-    def blog_following(blog_name, options={})
-      validate_options([:limit, :offset], options)
-      get(blog_path(blog_name, 'following'), options)
-    end
-
-    def followed_by(blog_name, query, options={})
-      validate_options([:query], options)
-      options[:query] = query
-      get(blog_path(blog_name, 'followed_by'), options)
-    end
-
-    # REVIEW: :types args do not appear to be working as of 2021-05-04
-    def notifications(blog_name, options={})
-      validate_options([:before,:types], options)
-      get(blog_path(blog_name, 'notifications'), options)
     end
 
   end
