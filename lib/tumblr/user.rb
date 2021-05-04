@@ -5,8 +5,8 @@ module Tumblr
       get('v2/user/info')
     end
 
-    def dashboard(options = {})
-      valid_opts = [:limit, :offset, :type, :since_id, :reblog_info, :notes_info]
+    def dashboard(options={})
+      valid_opts=[:limit,:offset,:type,:since_id,:reblog_info,:notes_info,:npf]
       validate_options(valid_opts, options)
       get('v2/user/dashboard', options)
     end
@@ -21,8 +21,10 @@ module Tumblr
       get('v2/user/following', options)
     end
 
-    def follow(url)
-      post('v2/user/follow', :url => url)
+    def follow(url=nil, options={})
+      validate_options([:url,:email], options)
+      options[:url] ||= url
+      post('v2/user/follow', options)
     end
 
     def unfollow(url)
@@ -36,6 +38,26 @@ module Tumblr
     def unlike(id, reblog_key)
       post('v2/user/unlike', :id => id, :reblog_key => reblog_key)
     end
+
+    # TODO: Test me!
+    def get_filtered_content
+      get('v2/user/filtered_content')
+    end
+
+    # TODO: Test me!
+    def add_filtered_content(filtered_strings=nil, options={})
+      validate_options([:filtered_content], options)
+      options[:filtered_content] ||= filtered_strings
+      post('v2/user/filtered_content', options)
+    end
+
+    # TODO: Test me!
+    def delete_filtered_content(filtered_strings, options={})
+      validate_options([:filtered_content], options)
+      options[:filtered_content] ||= filtered_strings
+      delete('v2/user/filtered_content', options)
+    end
+
 
   end
 end

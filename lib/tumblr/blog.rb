@@ -110,5 +110,12 @@ module Tumblr
       post(blog_path(blocker_blog_name, 'blocks'), options)
     end
 
+    # TODO: Test me!
+    def notes(blog_name, post_id=nil, options={})
+      validate_options([:id,:before_timestamp,:mode], options)
+      options[:id] ||= post_id
+      post(blog_path(blocker_blog_name, 'notes'), options)
+    end
+
   end
 end
