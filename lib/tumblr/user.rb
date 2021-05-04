@@ -6,7 +6,7 @@ module Tumblr
     end
 
     def dashboard(options={})
-      valid_opts=[:limit,:offset,:type,:since_id,:reblog_info,:notes_info,:npf]
+      valid_opts=[:limit,:offset,:type,:since_id,:before_id,:reblog_info,:notes_info,:npf]
       validate_options(valid_opts, options)
       get('v2/user/dashboard', options)
     end
@@ -57,7 +57,6 @@ module Tumblr
       options[:filtered_content] ||= filtered_strings
       delete('v2/user/filtered_content', options)
     end
-
 
   end
 end

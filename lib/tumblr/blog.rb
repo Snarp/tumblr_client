@@ -36,21 +36,15 @@ module Tumblr
     def blog_likes(blog_name, options = {})
       validate_options([:limit, :offset, :before, :after], options)
       url = blog_path(blog_name, 'likes')
-
-      params = { :api_key => @consumer_key }
-      params.merge! options
-      get(url, params)
+      get(url, {api_key: @consumer_key}.merge(options))
     end
 
     def posts(blog_name, options = {})
       url = blog_path(blog_name, 'posts')
-      if options.has_key?(:type)
-        url = "#{url}/#{options[:type]}"
+      if type = options.delete(:type)
+        url = "#{url}/#{type}"
       end
-
-      params = { :api_key => @consumer_key }
-      params.merge! options
-      get(url, params)
+      get(url, {api_key: @consumer_key}.merge(options))
     end
 
     def get_post(blog_name, post_id, options={})

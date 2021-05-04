@@ -3,6 +3,7 @@ require_relative 'user'
 require_relative 'request'
 require_relative 'connection'
 require_relative 'post'
+require_relative 'post_npf'
 require_relative 'tagged'
 require_relative 'helpers'
 

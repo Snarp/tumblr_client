@@ -40,6 +40,15 @@ module Tumblr
     end
 
     # TODO: Test me!
+    def put(path, params={})
+      response = connection.put do |req|
+        req.url path
+        req.body = params unless params.empty?
+      end
+      respond(response)
+    end
+
+    # TODO: Test me!
     def delete(path, params={})
       response = connection.delete do |req|
         req.url path
