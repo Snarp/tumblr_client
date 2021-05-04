@@ -1,10 +1,10 @@
-require 'tumblr/blog'
-require 'tumblr/user'
-require 'tumblr/request'
-require 'tumblr/connection'
-require 'tumblr/post'
-require 'tumblr/tagged'
-require 'tumblr/helpers'
+require_relative 'blog'
+require_relative 'user'
+require_relative 'request'
+require_relative 'connection'
+require_relative 'post'
+require_relative 'tagged'
+require_relative 'helpers'
 
 module Tumblr
   class Client
@@ -22,6 +22,8 @@ module Tumblr
     include Tumblr::Tagged
     include Tumblr::Helper
     include Tumblr::Connection
+
+    attr_accessor :symbolize_keys
 
     def initialize(attrs= {})
       attrs = Tumblr.options.merge(attrs)

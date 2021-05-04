@@ -1,5 +1,5 @@
-require 'tumblr/client'
-require 'tumblr/config'
+require_relative 'tumblr/client'
+require_relative 'tumblr/config'
 
 module Tumblr
 

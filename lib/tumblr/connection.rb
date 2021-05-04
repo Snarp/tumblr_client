@@ -4,7 +4,7 @@ require 'faraday_middleware'
 module Tumblr
   module Connection
 
-    def connection(options={})
+    def connection(symbolize_names: @symbolize_keys, **options)
       options = options.clone
 
       default_options = {
@@ -24,7 +24,7 @@ module Tumblr
         end
         conn.request :multipart
         conn.request :url_encoded
-        conn.response :json, :content_type => /\bjson$/
+        conn.response :json, content_type: /\bjson$/, parser_options: {symbolize_names: symbolize_names}
         conn.adapter client
       end
     end

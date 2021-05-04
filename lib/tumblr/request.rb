@@ -15,9 +15,9 @@ module Tumblr
     def get_redirect_url(path, params = {})
       response = get_response path, params
       if response.status == 301
-        response.headers['Location']
+        response.headers['Location'] || response.headers[:Location]
       else
-        response.body['meta']
+        response.body['meta'] || response.body[:meta]
       end
     end
 
@@ -41,11 +41,12 @@ module Tumblr
 
     def respond(response)
       if [201, 200].include?(response.status)
-        response.body['response']
+        response.body['response'] || response.body[:response]
       else
         # surface the meta alongside response
-        res = response.body['meta'] || {}
-        res.merge! response.body['response'] if response.body['response'].is_a?(Hash)
+        res = response.body['meta'] || response.body[:meta] || {}
+        inner_res = response.body['response'] || response.body[:response]
+        res.merge! inner_res if inner_res.is_a?(Hash)
         res
       end
     end
