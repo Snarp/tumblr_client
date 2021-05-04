@@ -61,20 +61,28 @@ module Tumblr
     end
 
     # TODO: Test me!
-    def block(blocker_blog_name, options={})
+    def block(blocker_blog_name, blocked_tumblelog=nil, options={})
       validate_options([:blocked_tumblelog,:post_id], options)
+      options[:blocked_tumblelog] ||= blocked_tumblelog
       post(blog_path(blocker_blog_name, 'blocks'), options)
     end
 
     # TODO: Test me!
-    def unblock(blocker_blog_name, options={})
+    def unblock(blocker_blog_name, blocked_tumblelog=nil, options={})
       validate_options([:blocked_tumblelog,:anonymous_only], options)
+      options[:blocked_tumblelog] ||= blocked_tumblelog
       post(blog_path(blocker_blog_name, 'blocks'), options)
     end
 
     def blog_following(blog_name, options={})
       validate_options([:limit, :offset], options)
       get(blog_path(blog_name, 'following'), options)
+    end
+
+    def followed_by(blog_name, query, options={})
+      validate_options([:query], options)
+      options[:query] = query
+      get(blog_path(blog_name, 'followed_by'), options)
     end
 
   end
