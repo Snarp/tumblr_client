@@ -55,5 +55,10 @@ module Tumblr
       get(blog_path(blog_name, 'posts/submission'), options)
     end
 
+    def blocks(blog_name, options={})
+      validate_options([:limit,:offset], options)
+      get(blog_path(blog_name, 'blocks'), options)
+    end
+
   end
 end

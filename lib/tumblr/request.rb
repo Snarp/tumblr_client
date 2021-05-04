@@ -40,7 +40,7 @@ module Tumblr
     end
 
     def respond(response)
-      if [201, 200].include?(response.status)
+      output = if [201, 200].include?(response.status)
         response.body['response'] || response.body[:response]
       else
         # surface the meta alongside response
