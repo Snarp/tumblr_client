@@ -2,7 +2,8 @@ require 'spec_helper'
 
 describe Tumblr::User do
 
-  let(:client) { Tumblr::Client.new }
+  let(:credentials) { load_test_env()[:credentials] }
+  let(:client)      { Tumblr::Client.new(**credentials) }
 
   describe :info do
 
@@ -109,6 +110,34 @@ describe Tumblr::User do
 
     end
 
+  end
+
+  describe :filtered_content do
+    it 'should correctly fetch, add to, and delete from filter list' do
+      # Fetch list
+      resp = client.get_filtered_content
+      expect(resp).to be_instance_of Hash
+      expect(arr_a=resp['filtered_content']).to be_instance_of Array
+
+      # Add to list
+      str_to_filter = 'bad and evil string'
+      resp = client.add_filtered_content(str_to_filter)
+      expect(resp).to be_truthy
+
+      sleep(2.0)
+
+      # Confirm added to list
+      resp = client.get_filtered_content
+      expect(arr_b=resp['filtered_content']).to include(str_to_filter)
+
+      # FIXME: CURRENTLY FAILING WITH 400 ERROR - 2021-05-04
+      resp = client.delete_filtered_content(str_to_filter)
+      expect(resp).to be_truthy
+
+      sleep(2.0)
+      resp = client.get_filtered_content
+      expect(arr_c=resp['filtered_content']).to eq(arr_a)
+    end
   end
 
 end

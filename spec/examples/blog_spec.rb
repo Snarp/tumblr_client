@@ -292,7 +292,6 @@ describe Tumblr::Blog do
         expect(blockee['name']).to eq(blog_username)
 
         # Unblock the blocked blog
-        # FIXME: CURRENTLY FAILING WITH 404 ERROR - 2021-05-04
         resp = client.unblock(own_blog_name, blog_username)
         expect(resp).to be_truthy
 
@@ -311,9 +310,9 @@ describe Tumblr::Blog do
       it 'should successfully fetch notes for given post' do
         resp = client.notes(blog_name, post_id)
         expect(resp).to be_instance_of Hash
-        expect(notes=resp[:notes]).to be_instance_of Array
+        expect(notes=resp['notes']).to be_instance_of Array
         expect(notes.first).to be_instance_of Hash
-        expect(notes.first[:type]).to be_truthy
+        expect(notes.first['type']).to be_truthy
       end
     end
   end

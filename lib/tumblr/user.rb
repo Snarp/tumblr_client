@@ -39,12 +39,11 @@ module Tumblr
       post('v2/user/unlike', :id => id, :reblog_key => reblog_key)
     end
 
-    # TODO: Test me!
-    def get_filtered_content
+    def filtered_content
       get('v2/user/filtered_content')
     end
+    alias_method :get_filtered_content, :filtered_content
 
-    # TODO: Test me!
     def add_filtered_content(filtered_strings=nil, options={})
       validate_options([:filtered_content], options)
       options[:filtered_content] ||= filtered_strings

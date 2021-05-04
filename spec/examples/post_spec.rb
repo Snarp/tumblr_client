@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 # TODO: Add tests for PostNpf methods!
+# TODO: Make this function correctly just in general!
 describe Tumblr::Post do
 
   let(:client) { Tumblr::Client.new }
@@ -10,7 +11,7 @@ describe Tumblr::Post do
   let(:source)    { 'the source' }
   let(:post_id)   { 42 }
 
-  describe :delete do
+  describe :delete_post do
 
     context 'when deleting a post' do
 
@@ -21,7 +22,7 @@ describe Tumblr::Post do
       end
 
       it 'should setup a delete properly' do
-        client.delete blog_name, post_id
+        client.delete_post blog_name, post_id
       end
 
     end

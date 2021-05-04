@@ -50,6 +50,7 @@ module Tumblr
 
     # FIXME: Tumblr API does not appear to accept default Faraday-formatted delete requests.
     def delete(path, params={})
+      puts "#{{path: path, params: params}}"
       response = connection.delete do |req|
         req.url path
         req.body = params unless params.empty?
@@ -59,8 +60,10 @@ module Tumblr
 
     def respond(response)
       output = if [201, 200].include?(response.status)
+        File.write("temp/#{Time.now.to_f}.yml", response.to_yaml)
         response.body['response'] || response.body[:response]
       else
+        File.write("temp/FAILED_#{Time.now.to_f}.yml", response.to_yaml)
         # surface the meta alongside response
         res = response.body['meta'] || response.body[:meta] || {}
         inner_res = response.body['response'] || response.body[:response]

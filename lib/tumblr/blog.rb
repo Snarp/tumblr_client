@@ -97,7 +97,6 @@ module Tumblr
       post(blog_path(blocker_blog_name, 'blocks'), options)
     end
 
-    # FIXME: Tumblr API does not appear to accept default Faraday-formatted DELETE requests...?
     def unblock(blocker_blog_name, blocked_tumblelog=nil, options={})
       validate_options([:blocked_tumblelog,:anonymous_only], options)
       options[:blocked_tumblelog] ||= blocked_tumblelog
