@@ -10,6 +10,10 @@ require 'dotenv'
 Dotenv.load('.env.test')
 ENV['RUBYDEV'] = 'test'
 
+RSpec.configure do |config|
+  config.fail_fast = true
+end
+
 def load_credentials
   [:consumer_key,:consumer_secret,:oauth_token,:oauth_token_secret].map do |k|
     [k, ENV[k.to_s.upcase]]

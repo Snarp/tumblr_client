@@ -14,70 +14,69 @@ describe Tumblr::Blog do
   let(:blog_following_own_blog)    { ENV['BLOG_FOLLOWING_OWN_BLOG'] }
   let(:blog_with_public_following) { ENV['BLOG_WITH_PUBLIC_FOLLOWING'] }
 
+  let(:sleep_interval)             { ENV['SLEEP_INTERVAL'].to_f }
+
   let(:client)      { Tumblr::Client.new(consumer_key: consumer_key) }
   let(:auth_client) { Tumblr::Client.new(**load_credentials())}
+
 
   before(:each) do
     sleep(ENV['SLEEP_INTERVAL'].to_f)
   end
 
-  describe :blog_info do
-    it 'should make the proper request with a short blog name, a blog url, and a blog uuid' do
-      response = client.get("v2/blog/#{blog_username}.tumblr.com/info", api_key: consumer_key)
-      expect(response).to be_instance_of Hash
-      expect(response['blog']).to be_instance_of Hash
+  # describe :blog_info do
+  #   context 'with valid input' do
+  #     it 'should make the proper request with a blog url' do
+  #       response = client.get("v2/blog/#{blog_name}/info", api_key: consumer_key)
+  #       expect(response).to be_instance_of Hash
+  #       expect(response['blog']).to be_instance_of Hash
+  #       sleep(sleep_interval)
+  #       r = client.blog_info blog_name
+  #       expect(r).to eq(response)
+  #     end
 
-      r = client.blog_info blog_name
-      expect(r).to eq(response)
+  #     it 'should make the proper request with a short blog name' do
+  #       response = client.get("v2/blog/#{blog_username}.tumblr.com/info", api_key: consumer_key)
+  #       expect(response).to be_instance_of Hash
+  #       expect(response['blog']).to be_instance_of Hash
+  #       sleep(sleep_interval)
+  #       r = client.blog_info blog_username
+  #       expect(r).to eq(response)
+  #     end
 
-      r = client.blog_info blog_username
-      expect(r).to eq(response)
+  #     it 'should make the proper request with a blog UUID' do
+  #       response = client.get("v2/blog/#{blog_uuid}/info", api_key: consumer_key)
+  #       expect(response).to be_instance_of Hash
+  #       expect(response['blog']).to be_instance_of Hash
+  #       sleep(sleep_interval)
+  #       r = client.blog_info blog_uuid
+  #       expect(r).to eq(response)
+  #     end
+  #   end # context 'with valid input'
+  # end
 
-      r = client.blog_info blog_uuid
-      expect(r).to eq(response)
+  describe :avatar do
+    context 'when supplying a size' do
+      before do
+        expect(client).to receive(:get_redirect_url).once.with("v2/blog/#{blog_name}/avatar/128").and_return('url')
+      end
+      it 'should construct the request properly' do
+        r = client.avatar blog_name, 128
+        expect(r).to eq('url')
+      end
     end
 
-    # it 'should make the proper request' do
-    #   response = client.get("v2/blog/#{blog_name}/info", api_key: consumer_key)
-    #   r = client.blog_info blog_name
-    #   expect(r).to eq(@response)
-    # end
-
-    # it 'should make the proper request with a short blog name' do
-    #   response = client.get("v2/blog/#{blog_username}.tumblr.com/info", api_key: consumer_key)
-    #   r = client.blog_info blog_username
-    #   expect(r).to eq(@response)
-    # end
-
-    # it 'should make the proper request with a blog UUID' do
-    #   response = client.get("v2/blog/#{blog_uuid}/info", api_key: consumer_key)
-    #   r = client.blog_info blog_uuid
-    #   expect(r).to eq(response)
-    # end
+    context 'when no size is specified' do
+      before do
+        expect(client).to receive(:get_redirect_url).once.with("v2/blog/#{blog_name}/avatar").
+        and_return('url')
+      end
+      it 'should construct the request properly' do
+        r = client.avatar blog_name
+        expect(r).to eq('url')
+      end
+    end
   end
-
-  # describe :avatar do
-  #   context 'when supplying a size' do
-  #     before do
-  #       expect(client).to receive(:get_redirect_url).once.with("v2/blog/#{blog_name}/avatar/128").and_return('url')
-  #     end
-  #     it 'should construct the request properly' do
-  #       r = client.avatar blog_name, 128
-  #       expect(r).to eq('url')
-  #     end
-  #   end
-
-  #   context 'when no size is specified' do
-  #     before do
-  #       expect(client).to receive(:get_redirect_url).once.with("v2/blog/#{blog_name}/avatar").
-  #       and_return('url')
-  #     end
-  #     it 'should construct the request properly' do
-  #       r = client.avatar blog_name
-  #       expect(r).to eq('url')
-  #     end
-  #   end
-  # end
 
   # describe :followers do
 

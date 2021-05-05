@@ -5,6 +5,8 @@ require 'yaml'
 module Tumblr
   module Request
 
+    attr_accessor :response
+
     # Perform a get request and return the raw response
     def get_response(path, params = {})
       connection.get do |req|
@@ -61,6 +63,7 @@ module Tumblr
     def respond(response)
       # TODO: Remove YAML logging stuff once testing is done!
       if ENV['RUBYDEV'] && response && (yaml=response.to_yaml)!=''
+        (@response = response) if response
         File.write("temp/STAT_#{response.status}_#{Time.now.to_f}.yml", yaml)
       end
 
