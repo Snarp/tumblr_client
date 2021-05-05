@@ -11,6 +11,7 @@ describe Tumblr::Blog do
   let(:blog_post_id)               { ENV['BLOG_POST_ID'] }
 
   let(:own_blog_username)          { ENV['OWN_BLOG_USERNAME'] }
+  let(:own_post_id)                { ENV['OWN_POST_ID'] }
   let(:blog_following_own_blog)    { ENV['BLOG_FOLLOWING_OWN_BLOG'] }
   let(:blog_with_public_following) { ENV['BLOG_WITH_PUBLIC_FOLLOWING'] }
   let(:blog_with_public_likes)     { ENV['BLOG_WITH_PUBLIC_LIKES'] }
@@ -143,106 +144,92 @@ describe Tumblr::Blog do
   #   end
   # end # describe :followed_by
 
-  describe :blog_likes do
-    context 'with invalid parameters' do
-      it 'should raise an error' do
-        expect(lambda {
-          client.blog_likes blog_name, :not => 'an option'
-        }).to raise_error ArgumentError
-      end
-    end
+  # describe :blog_likes do
+  #   context 'with invalid parameters' do
+  #     it 'should raise an error' do
+  #       expect(lambda {
+  #         client.blog_likes blog_name, :not => 'an option'
+  #       }).to raise_error ArgumentError
+  #     end
+  #   end
 
-    context 'with valid parameters' do
-      it 'should construct the request properly' do
-        response = client.get("v2/blog/#{blog_with_public_likes}.tumblr.com/likes", limit: 1, api_key: consumer_key)
-        expect(response).to be_instance_of Hash
-        expect(response['liked_posts']).to be_instance_of Array
-        sleep(sleep_interval)
-        r = auth_client.blog_likes blog_with_public_likes, limit: 1
-        post_a = response['liked_posts'][0]
-        post_b = r['liked_posts'][0]
-        expect(post_a['id']).to eq(post_b['id'])
-      end
-    end
-  end # describe :blog_likes
+  #   context 'with valid parameters' do
+  #     it 'should construct the request properly' do
+  #       response = client.get("v2/blog/#{blog_with_public_likes}.tumblr.com/likes", limit: 1, api_key: consumer_key)
+  #       expect(response).to be_instance_of Hash
+  #       expect(response['liked_posts']).to be_instance_of Array
+  #       sleep(sleep_interval)
+  #       r = auth_client.blog_likes blog_with_public_likes, limit: 1
+  #       post_a = response['liked_posts'][0]
+  #       post_b = r['liked_posts'][0]
+  #       expect(post_a['id']).to eq(post_b['id'])
+  #     end
+  #   end
+  # end # describe :blog_likes
 
   # describe :posts do
-
-  #   context 'without a type supplied' do
-
-  #     before do
-  #       expect(client).to receive(:get).once.with("v2/blog/#{blog_name}/posts", {
-  #         :limit => 1,
-  #         :api_key => consumer_key
-  #       }).and_return('response')
-  #     end
-
+  #   context 'with valid parameters' do
   #     it 'should construct the request properly' do
-  #       r = client.posts blog_name, :limit => 1
-  #       expect(r).to eq('response')
+  #       response = client.get("v2/blog/#{blog_name}/posts", limit: 1, api_key: consumer_key)
+  #       expect(response).to be_instance_of Hash
+  #       expect(response['posts']).to be_instance_of Array
+  #       sleep(sleep_interval)
+  #       r = client.posts blog_name, limit: 1
+  #       expect(r).to eq(response)
   #     end
 
+  #     it 'should construct a request for a specific post id properly' do
+  #       response = client.get("v2/blog/#{blog_name}/posts", id: blog_post_id, api_key: consumer_key)
+  #       expect(response).to be_instance_of Hash
+  #       expect(response['posts']).to be_instance_of Array
+  #       # expect(response['posts'].first).to be_instance_of Hash
+  #       # expect(response['posts'].first['id_string']).to eq(blog_post_id)
+  #       sleep(sleep_interval)
+  #       r = client.posts blog_name, id: blog_post_id
+  #       expect(r).to eq(response)
+  #     end
   #   end
-
-  #   # REVIEW: Post types deprecated.
-  #   # context 'when supplying a type' do
-  #   #   before do
-  #   #     expect(client).to receive(:get).once.with("v2/blog/#{blog_name}/posts/audio", {
-  #   #       :limit => 1,
-  #   #       :api_key => consumer_key,
-  #   #       :type => 'audio'
-  #   #     }).and_return('response')
-  #   #   end
-  #   #   it 'should construct the request properly' do
-  #   #     r = client.posts blog_name, :limit => 1, :type => 'audio'
-  #   #     expect(r).to eq('response')
-  #   #   end
-  #   # end
-
-  # end
+  # end # describe :posts
 
   # describe :get_post do
-  #   context 'valid request with valid id' do
-  #     before do
-  #       expect(client).to receive(:get).once.with("v2/blog/#{blog_name}/posts/#{blog_post_id}").and_return('response')
-  #     end
+  #   context 'with valid parameters' do
   #     it 'should construct the request properly' do
-  #       r = client.get_post(blog_name, blog_post_id)
-  #       expect(r).to eq('response')
+  #       response = auth_client.get("v2/blog/#{own_blog_username}.tumblr.com/posts/#{own_post_id}")
+  #       expect(response).to be_instance_of Hash
+  #       expect(response['id_string']).to eq(own_post_id)
+  #       sleep(sleep_interval)
+  #       r = auth_client.get_post(own_blog_username, own_post_id)
+  #       expect(r).to eq(response)
   #     end
   #   end
-  # end
+  # end # describe :get_post
 
-  # # These are all just lists of posts with pagination
-  # [:queue, :draft, :submissions].each do |type|
+  # These are all just lists of posts with pagination
+  [:queue, :draft, :submission].each do |type|
+    # # annoying
+    # ext = if (type==:submissions) then 'submission' else type.to_s end
 
-  #   ext = type == :submissions ? 'submission' : type.to_s # annoying
+    describe type do
+      context 'when using parameters other than limit & offset' do
+        it 'should raise an error' do
+          expect(lambda {
+            client.send type, blog_name, :not => 'an option'
+          }).to raise_error ArgumentError
+        end
+      end
 
-  #   describe type do
-
-  #     context 'when using parameters other than limit & offset' do
-  #       it 'should raise an error' do
-  #         expect(lambda {
-  #           client.send type, blog_name, :not => 'an option'
-  #         }).to raise_error ArgumentError
-  #       end
-  #     end
-
-  #     context 'with valid options' do
-  #       it 'should construct the call properly' do
-  #         limit = 5
-  #         expect(client).to receive(:get).once.with("v2/blog/#{blog_name}/posts/#{ext}", {
-  #           :limit => limit
-  #         }).and_return('response')
-  #         r = client.send type, blog_name, :limit => limit
-  #         expect(r).to eq('response')
-  #       end
-
-  #     end
-
-  #   end
-
-  # end
+      # context 'with valid options' do
+      #   it 'should construct the call properly' do
+      #     limit = 5
+      #     expect(client).to receive(:get).once.with("v2/blog/#{blog_name}/posts/#{ext}", {
+      #       :limit => limit
+      #     }).and_return('response')
+      #     r = client.send type, blog_name, :limit => limit
+      #     expect(r).to eq('response')
+      #   end
+      # end # context 'with valid options'
+    end # describe type do
+  end # [:queue, :draft, :submissions].each do |type|
 
   # describe :notifications do
   #   context 'with valid and accessible blog name' do

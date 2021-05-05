@@ -78,6 +78,7 @@ module Tumblr
       validate_options([:limit, :offset], options)
       get(blog_path(blog_name, 'posts/submission'), options)
     end
+    alias_method :submission, :submissions
 
     # REVIEW: :types args do not appear to be working as of 2021-05-04
     def notifications(blog_name, options={})
