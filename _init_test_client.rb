@@ -13,11 +13,14 @@ def load_credentials
 end
 
 def client
-  Tumblr::Client.new(consumer_key: ENV['CONSUMER_KEY'])
+  @client ||= Tumblr::Client.new(consumer_key: ENV['CONSUMER_KEY'])
 end
-
 def auth_client
-  Tumblr::Client.new(**load_credentials())
+  @auth_client ||= Tumblr::Client.new(**load_credentials())
+end
+def init_clients
+  @client = Tumblr::Client.new(consumer_key: ENV['CONSUMER_KEY'])
+  @auth_client = Tumblr::Client.new(**load_credentials())
 end
 
 def assign_vars(input=Dotenv.parse(@env_fname))
@@ -31,3 +34,4 @@ def assign_vars(input=Dotenv.parse(@env_fname))
   return output
 end
 assign_vars()
+init_clients()

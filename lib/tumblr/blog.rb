@@ -92,15 +92,16 @@ module Tumblr
     end
     alias_method :blocked, :blocks
 
-    def block(blocker_blog_name, blocked_tumblelog=nil, options={})
+    def block(blocker_blog_name, blockee=nil, options={})
       validate_options([:blocked_tumblelog,:post_id], options)
-      options[:blocked_tumblelog] ||= blocked_tumblelog
+      options[:blocked_tumblelog] ||= blockee
       post(blog_path(blocker_blog_name, 'blocks'), options)
     end
 
-    def unblock(blocker_blog_name, blocked_tumblelog=nil, options={})
+    def unblock(blocker_blog_name, blockee=nil, options={})
       validate_options([:blocked_tumblelog,:anonymous_only], options)
-      options[:blocked_tumblelog] ||= blocked_tumblelog
+      options[:blocked_tumblelog] ||= blockee
+      puts "#{{blocker_blog_name: blocker_blog_name, options: options}}"
       delete(blog_path(blocker_blog_name, 'blocks'), options)
     end
 

@@ -15,6 +15,7 @@ describe Tumblr::Blog do
   let(:blog_following_own_blog)    { ENV['BLOG_FOLLOWING_OWN_BLOG'] }
   let(:blog_with_public_following) { ENV['BLOG_WITH_PUBLIC_FOLLOWING'] }
   let(:blog_with_public_likes)     { ENV['BLOG_WITH_PUBLIC_LIKES'] }
+  let(:blog_to_block)              { ENV['BLOG_TO_BLOCK'] }
 
   let(:sleep_interval)             { ENV['SLEEP_INTERVAL'].to_f }
 
@@ -204,74 +205,109 @@ describe Tumblr::Blog do
   #   end
   # end # describe :get_post
 
-  # These are all just lists of posts with pagination
-  [:queue, :draft, :submission].each do |type|
-    # # annoying
-    # ext = if (type==:submissions) then 'submission' else type.to_s end
+  # # These responses are all just lists of posts with pagination
+  # [:queue, :draft, :submission].each do |type|
+  #   describe type do
+  #     context 'with invalid parameters' do
+  #       it 'should raise an error' do
+  #         expect(lambda {
+  #           client.send type, blog_name, :not => 'an option'
+  #         }).to raise_error ArgumentError
+  #       end
+  #     end
 
-    describe type do
-      context 'when using parameters other than limit & offset' do
-        it 'should raise an error' do
-          expect(lambda {
-            client.send type, blog_name, :not => 'an option'
-          }).to raise_error ArgumentError
-        end
-      end
-
-      # context 'with valid options' do
-      #   it 'should construct the call properly' do
-      #     limit = 5
-      #     expect(client).to receive(:get).once.with("v2/blog/#{blog_name}/posts/#{ext}", {
-      #       :limit => limit
-      #     }).and_return('response')
-      #     r = client.send type, blog_name, :limit => limit
-      #     expect(r).to eq('response')
-      #   end
-      # end # context 'with valid options'
-    end # describe type do
-  end # [:queue, :draft, :submissions].each do |type|
+  #     context 'with valid parameters' do
+  #       it 'should construct the call properly' do
+  #         response = auth_client.get("v2/blog/#{own_blog_username}.tumblr.com/posts/#{type}", limit: 1)
+  #         expect(response).to be_instance_of Hash
+  #         expect(response['posts']).to be_instance_of Array
+  #         sleep(sleep_interval)
+  #         r = auth_client.send(type, own_blog_username, limit: 1)
+  #         expect(r).to eq(response)
+  #       end
+  #     end # context 'with valid parameters'
+  #   end # describe type do
+  # end # [:queue, :draft, :submissions].each do |type|
 
   # describe :notifications do
-  #   context 'with valid and accessible blog name' do
-  #     before do
-  #       expect(client).to receive(:get).once.with("v2/blog/#{own_blog_username}/notifications").and_return('response')
-  #     end
+  #   context 'with valid parameters' do
   #     it 'should construct the request properly' do
-  #       r = client.notifications(own_blog_username)
-  #       expect(r).to eq('response')
+  #       response = auth_client.get("v2/blog/#{own_blog_username}.tumblr.com/notifications")
+  #       expect(response).to be_instance_of Hash
+  #       expect(response['notifications']).to be_instance_of Array
+
+  #       sleep(sleep_interval)
+  #       r = auth_client.notifications(own_blog_username)
+  #       # expect(r).to eq(response) # Nope; output here can change quickly
+  #       expect(r['notifications']).to be_instance_of Array
+  #       expect(r['notifications']).to include(response['notifications'].first)
   #     end
   #   end
-  # end
 
-  # describe :blocks do
-  #   context 'with valid and accessible blog names' do
-  #     it 'should block and unblock the other blog' do
-  #       # Block a blog from own blog
-  #       resp = client.block(own_blog_username, blog_username)
-  #       expect(resp).to be_truthy
-
-  #       sleep(2.0)
-
-  #       # Fetch list of blocked users, ensure that blocked blog is first
-  #       resp = client.blocks(own_blog_username)
-  #       expect(resp).to be_instance_of Hash
-  #       expect(blocked=resp['blocked_tumblelogs']).to be_instance_of Array
-  #       expect(blockee=blocked.first).to be_instance_of Hash
-  #       expect(blockee['name']).to eq(blog_username)
-
-  #       # Unblock the blocked blog
-  #       resp = client.unblock(own_blog_username, blog_username)
-  #       expect(resp).to be_truthy
-
-  #       sleep(2.0)
-
-  #       # Fetch list of blocked users, ensure that blocked blog is gone
-  #       resp = client.blocks(own_blog_username)
-  #       blockee = resp['blocked_tumblelogs'].first
-  #       expect(blockee).not_to eq(blog_username)
+  #   context 'with invalid parameters' do
+  #     it 'should raise an error' do
+  #       expect(lambda {
+  #         auth_client.notifications own_blog_username, not: 'an option'
+  #       }).to raise_error ArgumentError
   #     end
   #   end
-  # end
+  # end # describe :notifications
+
+  describe :blocks do
+    context 'with valid parameters' do
+      it 'should construct the GET (retrieve list) request properly' do
+        response = auth_client.get("v2/blog/#{own_blog_username}.tumblr.com/blocks", limit: 1)
+        expect(response).to be_instance_of Hash
+        expect(response['blocked_tumblelogs']).to be_instance_of Array
+
+        sleep(sleep_interval)
+        r = auth_client.blocks(own_blog_username, limit: 1)
+        expect(r).to eq(response)
+      end
+
+      it 'should construct the POST (block blog) and DELETE (unblock blog) requests properly' do
+        block_resp = auth_client.post("v2/blog/#{own_blog_username}.tumblr.com/blocks", blocked_tumblelog: blog_to_block)
+        expect(block_resp).to be_truthy
+        sleep(sleep_interval)
+        block_r = auth_client.block(own_blog_username, blog_to_block)
+        expect(block_r).to eq(block_resp)
+
+        sleep(sleep_interval)
+
+        unblock_resp = auth_client.delete("v2/blog/#{own_blog_username}.tumblr.com/blocks", blocked_tumblelog: blog_to_block)
+        expect(unblock_resp).to be_truthy
+        sleep(sleep_interval)
+        unblock_r = auth_client.block(own_blog_username, blog_to_block)
+        expect(unblock_r).to eq(unblock_resp)
+      end
+
+      # it 'should block and unblock the other blog' do
+      #   # Block a blog from own blog
+      #   resp = auth_client.block(own_blog_username, blog_username)
+      #   expect(resp).to be_truthy
+
+      #   sleep(2.0)
+
+      #   # Fetch list of blocked users, ensure that blocked blog is first
+      #   resp = auth_client.blocks(own_blog_username)
+      #   expect(resp).to be_instance_of Hash
+      #   expect(blocked=resp['blocked_tumblelogs']).to be_instance_of Array
+      #   expect(blockee=blocked.first).to be_instance_of Hash
+      #   expect(blockee['name']).to eq(blog_username)
+
+      #   # Unblock the blocked blog
+      #   resp = auth_client.unblock(own_blog_username, blog_username)
+      #   expect(resp).to be_truthy
+
+      #   sleep(2.0)
+
+      #   # Fetch list of blocked users, ensure that blocked blog is gone
+      #   resp = auth_client.blocks(own_blog_username)
+      #   blockee = resp['blocked_tumblelogs'].first
+      #   expect(blockee).not_to eq(blog_username)
+      # end
+    end
+  end
 
   # describe :notes do
   #   context 'with valid blog name and post id' do
