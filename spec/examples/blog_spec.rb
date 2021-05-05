@@ -13,6 +13,7 @@ describe Tumblr::Blog do
   let(:own_blog_username)          { ENV['OWN_BLOG_USERNAME'] }
   let(:blog_following_own_blog)    { ENV['BLOG_FOLLOWING_OWN_BLOG'] }
   let(:blog_with_public_following) { ENV['BLOG_WITH_PUBLIC_FOLLOWING'] }
+  let(:blog_with_public_likes)     { ENV['BLOG_WITH_PUBLIC_LIKES'] }
 
   let(:sleep_interval)             { ENV['SLEEP_INTERVAL'].to_f }
 
@@ -53,92 +54,83 @@ describe Tumblr::Blog do
   #       expect(r).to eq(response)
   #     end
   #   end # context 'with valid input'
-  # end
+  # end # describe :blog_info
 
-  describe :avatar do
-    context 'when supplying a size' do
-      before do
-        expect(client).to receive(:get_redirect_url).once.with("v2/blog/#{blog_name}/avatar/128").and_return('url')
-      end
-      it 'should construct the request properly' do
-        r = client.avatar blog_name, 128
-        expect(r).to eq('url')
-      end
-    end
+  # describe :avatar do
+  #   context 'when supplying a size' do
+  #     it 'should construct the request properly' do
+  #       url = client.get_redirect_url("v2/blog/#{blog_name}/avatar/128")
+  #       expect(url).to be_instance_of String
+  #       expect(url.start_with?('http')).to be true
+  #       sleep(sleep_interval)
+  #       r = client.avatar blog_name, 128
+  #       expect(r).to eq(url)
+  #     end
+  #   end
 
-    context 'when no size is specified' do
-      before do
-        expect(client).to receive(:get_redirect_url).once.with("v2/blog/#{blog_name}/avatar").
-        and_return('url')
-      end
-      it 'should construct the request properly' do
-        r = client.avatar blog_name
-        expect(r).to eq('url')
-      end
-    end
-  end
+  #   context 'when no size is specified' do
+  #     it 'should construct the request properly' do
+  #       url = client.get_redirect_url("v2/blog/#{blog_name}/avatar")
+  #       expect(url).to be_instance_of String
+  #       expect(url.start_with?('http')).to be true
+  #       sleep(sleep_interval)
+  #       r = client.avatar blog_name
+  #       expect(r).to eq(url)
+  #     end
+  #   end
+  # end # describe :avatar
 
   # describe :followers do
-
   #   context 'with invalid parameters' do
-
   #     it 'should raise an error' do
   #       expect(lambda {
-  #         client.followers blog_name, :not => 'an option'
+  #         auth_client.followers blog_name, :not => 'an option'
   #       }).to raise_error ArgumentError
   #     end
-
   #   end
 
   #   context 'with valid parameters' do
-
-  #     before do
-  #       expect(client).to receive(:get).once.with("v2/blog/#{blog_name}/followers", {
-  #         :limit => 1
-  #       }).and_return('response')
-  #     end
-
   #     it 'should construct the request properly' do
-  #       r = client.followers blog_name, :limit => 1
-  #       expect(r).to eq('response')
+  #       response = auth_client.get("v2/blog/#{own_blog_username}.tumblr.com/followers", limit: 1)
+  #       expect(response).to be_instance_of Hash
+  #       expect(response['users']).to be_instance_of Array
+  #       sleep(sleep_interval)
+  #       r = auth_client.followers own_blog_username, limit: 1
+  #       expect(r).to eq(response)
   #     end
-
   #   end
+  # end # describe :followers
 
-  # end
-
-  # # FIXME: Find actual demo blog with public following!
   # describe :blog_following do
   #   context 'with valid parameters' do
-  #     before do
-  #       expect(client).to receive(:get).once.with("v2/blog/#{blog_with_public_following}/following", { limit: 1 }).and_return('response')
-  #     end
-
   #     it 'should construct the request properly' do
-  #       r = client.blog_following(blog_with_public_following, limit: 1)
-  #       expect(r).to eq('response')
+  #       response = auth_client.get("v2/blog/#{blog_with_public_following}.tumblr.com/following", limit: 1)
+  #       expect(response).to be_instance_of Hash
+  #       expect(response['blogs']).to be_instance_of Array
+  #       sleep(sleep_interval)
+  #       r = auth_client.blog_following(blog_with_public_following, limit: 1)
+  #       expect(r).to eq(response)
   #     end
   #   end
 
   #   context 'with invalid parameters' do
   #     it 'should raise an error' do
   #       expect(lambda {
-  #         client.blog_following(blog_with_public_following, not: 'an option')
+  #         auth_client.blog_following(blog_with_public_following, not: 'an option')
   #       }).to raise_error ArgumentError
   #     end
   #   end
-  # end
+  # end # describe :blog_following
 
-  # # TODO: Needs blog names!
   # describe :followed_by do
   #   context 'with valid parameters' do
-  #     before do
-  #       expect(client).to receive(:get).once.with("v2/blog/#{own_blog_username}/followed_by", { query: blog_following_own_blog }).and_return('response')
-  #     end
-
   #     it 'should construct the request properly' do
-  #       r = client.followed_by(own_blog_username, blog_following_own_blog)
-  #       expect(r).to eq('response')
+  #       response = auth_client.get("v2/blog/#{own_blog_username}.tumblr.com/followed_by", query: blog_username)
+  #       expect(response).to be_instance_of Hash
+  #       expect([true,false]).to include(response['followed_by'])
+  #       sleep(sleep_interval)
+  #       r = auth_client.followed_by(own_blog_username, blog_username)
+  #       expect(r).to eq(response)
   #     end
   #   end
 
@@ -149,37 +141,30 @@ describe Tumblr::Blog do
   #       }).to raise_error ArgumentError
   #     end
   #   end
-  # end
+  # end # describe :followed_by
 
-  # describe :blog_likes do
+  describe :blog_likes do
+    context 'with invalid parameters' do
+      it 'should raise an error' do
+        expect(lambda {
+          client.blog_likes blog_name, :not => 'an option'
+        }).to raise_error ArgumentError
+      end
+    end
 
-  #   context 'with invalid parameters' do
-
-  #     it 'should raise an error' do
-  #       expect(lambda {
-  #         client.blog_likes blog_name, :not => 'an option'
-  #       }).to raise_error ArgumentError
-  #     end
-
-  #   end
-
-  #   context 'with valid parameters' do
-
-  #     before do
-  #       expect(client).to receive(:get).once.with("v2/blog/#{blog_name}/likes", {
-  #         :limit => 1,
-  #         :api_key => consumer_key
-  #       }).and_return('response')
-  #     end
-
-  #     it 'should construct the request properly' do
-  #       r = client.blog_likes blog_name, :limit => 1
-  #       expect(r).to eq('response')
-  #     end
-
-  #   end
-
-  # end
+    context 'with valid parameters' do
+      it 'should construct the request properly' do
+        response = client.get("v2/blog/#{blog_with_public_likes}.tumblr.com/likes", limit: 1, api_key: consumer_key)
+        expect(response).to be_instance_of Hash
+        expect(response['liked_posts']).to be_instance_of Array
+        sleep(sleep_interval)
+        r = auth_client.blog_likes blog_with_public_likes, limit: 1
+        post_a = response['liked_posts'][0]
+        post_b = r['liked_posts'][0]
+        expect(post_a['id']).to eq(post_b['id'])
+      end
+    end
+  end # describe :blog_likes
 
   # describe :posts do
 

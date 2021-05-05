@@ -25,9 +25,9 @@ module Tumblr
       get(blog_path(blog_name, 'following'), options)
     end
 
-    def followed_by(blog_name, query, options={})
+    def followed_by(blog_name, query=nil, **options)
       validate_options([:query], options)
-      options[:query] = query
+      options[:query] ||= query
       get(blog_path(blog_name, 'followed_by'), options)
     end
     alias_method :blog_followed_by, :followed_by
