@@ -10,4 +10,6 @@ def init_client
     symbolize_keys: true)
 end
 
+ENV['RUBYDEV'] = 'dev'
+
 init_client

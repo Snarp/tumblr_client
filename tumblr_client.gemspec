@@ -2,8 +2,8 @@
 require File.join(File.dirname(__FILE__), 'lib/tumblr/version')
 
 Gem::Specification.new do |gem|
-  gem.add_dependency 'faraday', '~> 0.9.0'
-  gem.add_dependency 'faraday_middleware', '~> 0.9'
+  gem.add_dependency 'faraday', '~> 1.0'
+  gem.add_dependency 'faraday_middleware', '~> 1.0'
   gem.add_dependency 'json'
   gem.add_dependency 'simple_oauth'
   gem.add_dependency 'oauth'
@@ -12,6 +12,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'rspec'
   gem.add_development_dependency 'webmock'
   gem.add_development_dependency 'simplecov'
+  gem.add_development_dependency 'dotenv'
   gem.authors = ['John Bunting', 'John Crepezzi']
   gem.description = %q{A Ruby wrapper for the Tumblr v2 API}
   gem.email = ['codingjester@gmail.com', 'john@crepezzi.com']

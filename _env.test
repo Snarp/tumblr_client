@@ -1,0 +1,15 @@
+// To run the full test suite, rename this file to `.env.test` 
+// and fill in the values below.
+CONSUMER_KEY=
+CONSUMER_SECRET=
+OAUTH_TOKEN=
+OAUTH_TOKEN_SECRET=
+
+BLOG_USERNAME=seejohnrun
+BLOG_NAME=seejohnrun.tumblr.com
+BLOG_UUID=t:jKTcbsxY9eyMrH6M9rux4Q
+BLOG_POST_ID=52950511850
+
+OWN_BLOG_USERNAME=
+BLOG_FOLLOWING_OWN_BLOG=
+BLOG_WITH_PUBLIC_FOLLOWING=

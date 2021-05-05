@@ -2,9 +2,9 @@ require 'spec_helper'
 
 describe Tumblr::Tagged do
 
-  let(:client) { Tumblr::Client.new }
-  let(:consumer_key) { 'consumer' }
-  let(:tag)          { 'helloworld' }
+  let(:client)       { Tumblr::Client.new(**load_credentials()) }
+  let(:consumer_key) { client.credentials[:consumer_key] }
+  let(:tag)          { 'cats' }
 
   before do
     Tumblr.configure do |c|

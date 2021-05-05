@@ -1,4 +1,6 @@
 require 'json'
+# TODO: Remove YAML logging stuff once testing is done!
+require 'yaml'
 
 module Tumblr
   module Request
@@ -14,7 +16,7 @@ module Tumblr
     # get a redirect url
     def get_redirect_url(path, params = {})
       response = get_response path, params
-      if response.status == 301
+      if (300..308).include?(response.status)
         response.headers['Location'] || response.headers[:Location]
       else
         response.body['meta'] || response.body[:meta]
@@ -48,9 +50,7 @@ module Tumblr
       respond(response)
     end
 
-    # FIXME: Tumblr API does not appear to accept default Faraday-formatted delete requests.
     def delete(path, params={})
-      puts "#{{path: path, params: params}}"
       response = connection.delete do |req|
         req.url path
         req.body = params unless params.empty?
@@ -59,11 +59,14 @@ module Tumblr
     end
 
     def respond(response)
+      # TODO: Remove YAML logging stuff once testing is done!
+      if ENV['RUBYDEV'] && response && (yaml=response.to_yaml)!=''
+        File.write("temp/STAT_#{response.status}_#{Time.now.to_f}.yml", yaml)
+      end
+
       output = if [201, 200].include?(response.status)
-        File.write("temp/#{Time.now.to_f}.yml", response.to_yaml)
         response.body['response'] || response.body[:response]
       else
-        File.write("temp/FAILED_#{Time.now.to_f}.yml", response.to_yaml)
         # surface the meta alongside response
         res = response.body['meta'] || response.body[:meta] || {}
         inner_res = response.body['response'] || response.body[:response]
