@@ -65,7 +65,7 @@ module Tumblr
       # TODO: Remove YAML logging stuff once testing is done!
       if ENV['RUBYDEV'] && response
         @response = response
-        File.write("temp/STAT_#{response.status}_#{Time.now.to_f}.yml", response.to_yaml)
+        File.write("temp/responses/STAT_#{response.status}_#{Time.now.to_f}.yml", response.to_yaml)
       end
 
       output = if [201, 200].include?(response.status)

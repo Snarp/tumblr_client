@@ -57,13 +57,11 @@ module Tumblr
       get(blog_path(blog_name, 'posts/queue'), options)
     end
 
-    # TODO: Test me!
     def reorder_queue(blog_name, options={})
       validate_options([:post_id,:insert_after], options)
       post(blog_path(blog_name, 'posts/queue/reorder'), options)
     end
 
-    # TODO: Test me!
     def shuffle_queue(blog_name)
       post(blog_path(blog_name, 'posts/queue/shuffle'))
     end
