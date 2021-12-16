@@ -4,7 +4,6 @@ describe Tumblr::User do
 
   let(:client) { Tumblr::Client.new }
 
-
   describe :info do
 
     it 'should make the request properly' do
